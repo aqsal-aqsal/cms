@@ -5,10 +5,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (auth()->check()) {
+    if (\Illuminate\Support\Facades\Auth::check()) {
         return redirect()->route('admin.dashboard');
     }
 
@@ -26,7 +27,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('posts', PostController::class)->except(['show']);
         Route::resource('categories', CategoryController::class)->except(['show']);
 
-        Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
-        Route::put('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+        Route::resource('users', AdminUserController::class)->except(['show']);
+        Route::resource('roles', RoleController::class)->except(['show']);
     });
 });

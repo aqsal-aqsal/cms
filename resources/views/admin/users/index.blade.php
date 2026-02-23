@@ -3,14 +3,19 @@
 @section('title', 'Pengguna & Role')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-semibold text-slate-900">Pengguna & Role</h1>
-        <p class="mt-1 text-sm text-slate-500">
-            Atur role pengguna yang dapat mengakses CMS.
-        </p>
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-slate-900">Pengguna</h1>
+            <p class="mt-1 text-sm text-slate-500">
+                Kelola akun pengguna dan role mereka.
+            </p>
+        </div>
+        <a href="{{ route('admin.users.create') }}" class="inline-flex items-center rounded-md bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">
+            Tambah Pengguna
+        </a>
     </div>
 
-    <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+    <div class="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden mb-4">
         <table class="min-w-full text-sm">
             <thead class="bg-slate-50 text-slate-600">
                 <tr>
@@ -30,24 +35,19 @@
                             {{ $user->email }}
                         </td>
                         <td class="px-4 py-3 text-slate-700">
-                            <form method="POST" action="{{ route('admin.users.update', $user) }}" class="inline-flex items-center gap-2">
-                                @csrf
-                                @method('PUT')
-                                <select
-                                    name="role_id"
-                                    class="rounded-md border border-slate-300 px-2 py-1 text-xs shadow-sm focus:border-sky-500 focus:ring-sky-500"
-                                    onchange="this.form.submit()"
-                                >
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}" @selected($user->role_id === $role->id)>
-                                            {{ ucfirst($role->name) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </form>
+                            {{ $user->role?->name ?? '-' }}
                         </td>
-                        <td class="px-4 py-3 text-right text-xs text-slate-400">
-                            ID: {{ $user->id }}
+                        <td class="px-4 py-3 text-right space-x-2">
+                            <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">
+                                Edit
+                            </a>
+                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus pengguna ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex items-center rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50">
+                                    Hapus
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 @empty
@@ -60,5 +60,8 @@
             </tbody>
         </table>
     </div>
-@endsection
 
+    <div>
+        {{ $users->links() }}
+    </div>
+@endsection
